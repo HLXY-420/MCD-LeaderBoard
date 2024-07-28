@@ -3,6 +3,7 @@
         "clsx",
         "isbot",
         "leaderboard",
+        "mapbox",
         "nextui",
         "Pipeable",
         "tailwindcss",
