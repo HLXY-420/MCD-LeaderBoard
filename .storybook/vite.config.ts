@@ -8,5 +8,9 @@ export default defineConfig(({ mode }) => {
   return {
     // no Remix Vite plugin here
     plugins: [tsconfigPaths()],
+
+    optimizeDeps: {
+      exclude: [".cache"],
+    },
   }
 })

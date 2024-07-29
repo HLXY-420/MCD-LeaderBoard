@@ -1,5 +1,6 @@
 import {
   Links,
+  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -7,10 +8,11 @@ import {
 } from "@remix-run/react";
 import "./tailwind.css";
 import { NextUIProvider } from "@nextui-org/react";
+import { SiteContainer } from "./components/SiteContainer";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="zh-cn">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,9 +21,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <NextUIProvider>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
+          <main className="light text-foreground bg-background">
+            {children}
+          </main>
+          <ScrollRestoration />
+          <Scripts />
         </NextUIProvider>
       </body>
     </html>
@@ -29,5 +33,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <SiteContainer>
+      <Outlet />
+    </SiteContainer>
+  );
 }
