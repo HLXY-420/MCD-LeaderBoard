@@ -1,4 +1,4 @@
-import { IconoirProvider, HomeSimple, ProfileCircle, PlusCircle, SunLight, HalfMoon, CloudBookmark, NewTab } from "iconoir-react";
+import { IconoirProvider, HomeSimple, ProfileCircle, PlusCircle, SunLight, HalfMoon, CloudBookmark, NewTab, LogIn, PasswordCursor, LogOut } from "iconoir-react";
 import {
     Navbar, 
     NavbarBrand, 
@@ -15,14 +15,17 @@ import {
 } from "@nextui-org/react";
 import { Dock, DockIcon } from "./ui/Dock";
 import { RecordModal } from "./RecordModal";
+import { LoginModal } from "./LoginModal";
+import { Link } from "@remix-run/react";
 
 export function SiteContainer({ children }: { children: React.ReactNode }) {
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const { isOpen: isRecordOpen, onOpen: onRecordOpen, onOpenChange: onRecordOpenChange } = useDisclosure();
+    const { isOpen: isLoginOpen, onOpen: onLoginOpen, onOpenChange: onLoginOpenChange } = useDisclosure();
 
     return (
         <div>
             <Navbar position="static" height={"5em"}>
-                <NavbarBrand>
+                <NavbarBrand className="space-x-2">
                     <a href="https://subit.org.cn" target="_blank">
                         <Image
                             isZoomed
@@ -35,14 +38,15 @@ export function SiteContainer({ children }: { children: React.ReactNode }) {
                 </NavbarBrand>
                 <NavbarContent justify="end">
                     <NavbarItem>
-                        <Button isIconOnly variant="light" color="default">
+                        <Button isIconOnly variant="light" color="default" isDisabled>
                             <HalfMoon width={"2.5em"} height={"2.5em"} strokeWidth={1.5} />
                         </Button>
                     </NavbarItem>
                 </NavbarContent>
             </Navbar>
             {children}
-            <RecordModal isOpen={isOpen} onOpenChange={onOpenChange} />
+            <RecordModal isOpen={isRecordOpen} onOpenChange={onRecordOpenChange} />
+            <LoginModal isOpen={isLoginOpen} onOpenChange={onLoginOpenChange} />
             <IconoirProvider
                 iconProps={{
                     color: "black",
@@ -55,14 +59,42 @@ export function SiteContainer({ children }: { children: React.ReactNode }) {
                 <div className="fixed bottom-12 w-full items-center justify-center">
                     <Dock direction="middle" magnification={70} distance={100}>
                         <DockIcon>
-                            <Button isIconOnly variant="light" color="default">
+                            <Button isIconOnly variant="light" color="default" as={Link} to="/">
                                 <HomeSimple />
                             </Button>
                         </DockIcon>
                         <DockIcon>
-                            <Button isIconOnly variant="light" color="default">
-                                <ProfileCircle />
-                            </Button>
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Button isIconOnly variant="light" color="default">
+                                        <ProfileCircle />
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu disabledKeys={["changepassword"]}>
+                                    <DropdownItem
+                                        key="login"
+                                        startContent={<LogIn width={"1.5em"} height={"1.5em"} />}
+                                        onPress={onLoginOpen}
+                                    >
+                                        登录
+                                    </DropdownItem>
+                                    <DropdownItem
+                                        key="changepassword"
+                                        description="开发中，敬请期待~"
+                                        startContent={<PasswordCursor width={"1.5em"} height={"1.5em"} />}
+                                    >
+                                        修改密码
+                                    </DropdownItem>
+                                    <DropdownItem
+                                        key="logout"
+                                        startContent={<LogOut width={"1.5em"} height={"1.5em"} color="danger"/>}
+                                        color="danger"
+                                        className="text-danger"
+                                    >
+                                        登出
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
                         </DockIcon>
                         <Divider orientation="vertical" />
                         <DockIcon>
@@ -76,7 +108,7 @@ export function SiteContainer({ children }: { children: React.ReactNode }) {
                                     <DropdownItem
                                         key="submit"
                                         startContent={<CloudBookmark width={"1.5em"} height={"1.5em"} />}
-                                        onPress={onOpen}
+                                        onPress={onRecordOpen}
                                     >
                                         提交新记录
                                     </DropdownItem>

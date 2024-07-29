@@ -81,4 +81,7 @@ module.exports = {
       },
     },
   ],
+  rules: {
+    "prefer-const": "warning",
+  },
 };
