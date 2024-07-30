@@ -1,14 +1,10 @@
 import { Authenticator } from "remix-auth";
 import { sessionStorage } from "~/services/session.server";
-
 import { FormStrategy } from "remix-auth-form";
+import type { User } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
-export interface User {
-	id: string;
-	email: string;
-	username: string;
-	imageUrl?: string;
-}
+const prisma = new PrismaClient();
 
 // Create an instance of the authenticator, pass a generic with what
 // strategies will return and will store in the session
@@ -16,6 +12,7 @@ export let authenticator = new Authenticator<User>(sessionStorage);
 
 // Tell the Authenticator to use the form strategy
 authenticator.use(
+	// @ts-ignore
 	new FormStrategy(async ({ form }) => {
 	  let email = form.get("email");
 	  // @ts-ignore
@@ -32,17 +29,9 @@ authenticator.use(
 
 export async function login(email: string) {
 	// Add your login logic here
-	return {
-		id: "1",
-		email,
-		username: "SubIT",
-	};
-}
+	const user = await prisma.user.findUnique({
+		where: { email },
+	})
 
-export async function logout() {
-	// Add your logout logic here
-}
-
-export async function changeUser(email: string) {
-	// Add your change user logic here
+	return user;
 }

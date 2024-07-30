@@ -11,16 +11,15 @@ import {
     DropdownTrigger,
     DropdownMenu,
     DropdownItem,
-    useDisclosure
+    useDisclosure,
+    Avatar
 } from "@nextui-org/react";
 import { Dock, DockIcon } from "./ui/Dock";
 import { RecordModal } from "./RecordModal";
-import { LoginModal } from "./LoginModal";
 import { Link } from "@remix-run/react";
 
-export function SiteContainer({ children }: { children: React.ReactNode }) {
+export function SiteContainer({ user, children }: { user: any, children: React.ReactNode }) {
     const { isOpen: isRecordOpen, onOpen: onRecordOpen, onOpenChange: onRecordOpenChange } = useDisclosure();
-    const { isOpen: isLoginOpen, onOpen: onLoginOpen, onOpenChange: onLoginOpenChange } = useDisclosure();
 
     return (
         <div>
@@ -46,7 +45,6 @@ export function SiteContainer({ children }: { children: React.ReactNode }) {
             </Navbar>
             {children}
             <RecordModal isOpen={isRecordOpen} onOpenChange={onRecordOpenChange} />
-            <LoginModal isOpen={isLoginOpen} onOpenChange={onLoginOpenChange} />
             <IconoirProvider
                 iconProps={{
                     color: "black",
@@ -66,17 +64,19 @@ export function SiteContainer({ children }: { children: React.ReactNode }) {
                         <DockIcon>
                             <Dropdown>
                                 <DropdownTrigger>
-                                    <Button isIconOnly variant="light" color="default">
-                                        <ProfileCircle />
+                                    <Button isIconOnly variant={(user && user.imageUrl) ? "light" : "bordered"} color="default">
+                                        {(user && user.imageUrl) ? <Image src={user.imageUrl} alt="Profile" /> : <ProfileCircle />}
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu disabledKeys={["changepassword"]}>
                                     <DropdownItem
                                         key="login"
-                                        startContent={<LogIn width={"1.5em"} height={"1.5em"} />}
-                                        onPress={onLoginOpen}
+                                        startContent={user ? "" : <LogIn width={"1.5em"} height={"1.5em"} />}
+                                        as={Link}
+                                        // @ts-ignore
+                                        to="/login"
                                     >
-                                        登录
+                                        {user ? user.username : "登录"}
                                     </DropdownItem>
                                     <DropdownItem
                                         key="changepassword"
@@ -90,6 +90,9 @@ export function SiteContainer({ children }: { children: React.ReactNode }) {
                                         startContent={<LogOut width={"1.5em"} height={"1.5em"} color="danger"/>}
                                         color="danger"
                                         className="text-danger"
+                                        as={Link}
+                                        // @ts-ignore
+                                        to="/logout"
                                     >
                                         登出
                                     </DropdownItem>

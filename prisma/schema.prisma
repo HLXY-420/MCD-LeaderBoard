@@ -41,12 +41,14 @@ model User {
 // }
 
 model Track {
-  id        String @id @default(cuid())
-  startTime DateTime
-  endTime   DateTime
-  imageUrl String?
+  id         String @id @default(cuid())
+  trackName  String
+  trackIntro String?
+  startTime  DateTime
+  endTime    DateTime
+  imageUrl   String?
 
-  users     userOnTrack[]
+  users      userOnTrack[]
 }
 
 // model record {

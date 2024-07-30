@@ -1,14 +1,16 @@
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
 import "./tailwind.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { SiteContainer } from "./components/SiteContainer";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { authenticator } from "./services/auth.server";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -33,9 +35,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  let user = useLoaderData();
+
   return (
-    <SiteContainer>
+    <SiteContainer user={user}>
       <Outlet />
     </SiteContainer>
   );
+}
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+
+  if (url.pathname === "/login") return null;
+
+  if (url.pathname === "/logout") return await authenticator.isAuthenticated(request);
+
+  return await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
 }
